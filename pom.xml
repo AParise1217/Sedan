@@ -1,0 +1,175 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.parisesoftware.sedan</groupId>
+    <artifactId>sedan-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Sedan :: Core</name>
+    <description>Sequential Edit DistANce Core Module</description>
+
+    <properties>
+
+        <!-- Maven Build Properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
+        <git.properties>git.properties</git.properties>
+
+        <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
+        <git-commit-id-plugin.dateFormat>yyyyMMdd-HHmmss</git-commit-id-plugin.dateFormat>
+
+        <!-- Below Properties are loaded in by the Git-Maven-Plugin at Build Time -->
+        <!--suppress UnresolvedMavenProperty -->
+        <version.number>${git.commit.time}.${git.commit.id.abbrev}</version.number>
+
+        <!-- Dependency Versions -->
+        <groovy.version>2.5.4</groovy.version>
+        <gmavenplus.version>1.6.2</gmavenplus.version>
+        <maven-surefire.version>2.18.1</maven-surefire.version>
+        <maven-compiler.version>3.3</maven-compiler.version>
+        <maven-compiler.config.version>1.8</maven-compiler.config.version>
+        <junit.version>4.12</junit.version>
+        <spockframework.version>1.2-groovy-2.5</spockframework.version>
+        <commons-lang3.version>3.8</commons-lang3.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git://gitlab.parisesoftware.com/aparise/sedan.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.parisesoftware.com:aparise/sedan.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>git://gitlab.parisesoftware.com/aparise/sedan.git</url>
+    </scm>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler.version}</version>
+                <configuration>
+                    <source>${maven-compiler.config.version}</source>
+                    <target>${maven-compiler.config.version}</target>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>compile</goal>
+                            <goal>compileTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Spec.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+
+                <!-- Provides Git Information to Maven -->
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>${git-commit-id-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${git.properties}</generateGitPropertiesFilename>
+                        <verbose>true</verbose>
+                        <dateFormat>${git-commit-id-plugin.dateFormat}</dateFormat>
+                        <injectAllReactorProjects>true</injectAllReactorProjects>
+                        <skipPoms>false</skipPoms>
+                        <runOnlyOnce>false</runOnlyOnce>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <configuration>
+                                <target>
+                                    <!-- Below Properties are loaded in by the Git-Maven-Plugin at Build Time -->
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <echo>Git Commit Id: ${git.commit.id}</echo>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <echo>Git Branch: ${git.branch}</echo>
+                                </target>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <!-- any version of Groovy \>= 1.5.0 should work here -->
+            <version>${groovy.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spockframework.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
