@@ -235,4 +235,31 @@ class SedanDriverTest extends Specification {
         !resultant
     }
 
+    def "DELETE_OPERATION: should equal `delete`."() {
+
+        when: 'the DELETE_OPERATION value is pulled from the driver'
+        String resultant = SedanDriver.DELETE_OPERATION
+
+        then: 'the resultant is equal to `delete`'
+        resultant == 'delete'
+    }
+
+    def "UPDATE_OPERATION: should equal `update`."() {
+
+        when: 'the UPDATE_OPERATION value is pulled from the driver'
+        String resultant = SedanDriver.UPDATE_OPERATION
+
+        then: 'the resultant is equal to `update`'
+        resultant == 'update'
+    }
+
+    def "ADD_OPERATION: should equal `add`."() {
+
+        when: 'the ADD_OPERATION value is pulled from the driver'
+        String resultant = SedanDriver.ADD_OPERATION
+
+        then: 'the resultant is equal to `add`'
+        resultant == 'add'
+    }
+
 }
