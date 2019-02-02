@@ -14,7 +14,7 @@ class SedanDriver {
     List difference(Map source, Map target) {
         List result = []
 
-        source.keySet().each { key ->
+        getKeys(source).each { key ->
             if (!containsKey(target, key)) {
                 result.add([operation: OperationType.DELETE, name: key])
             } else {
@@ -26,7 +26,7 @@ class SedanDriver {
             }
         }
 
-        target.keySet().each { key ->
+        getKeys(target).each { key ->
             if(!containsKey(source, key)) {
                 result.add([operation: OperationType.ADD, name: key, value: target[key]])
             } else {
@@ -44,17 +44,44 @@ class SedanDriver {
      * @return {@code boolean}
      */
     boolean hasDifferentValueAtKey(Map source, Map target, Object key) {
-        return (source[key] != target[key])
+        return (getValueAt(source, key) != getValueAt(target, key))
+    }
+
+    /**
+     * Fetch the value located at the given key
+     * @param source    the map to query
+     * @param key       the key of the map to fetch for
+     * @return {@code Object}
+     */
+    Object getValueAt(Map source, Object key) {
+        if(source == null) {
+            return null
+        }
+
+        return source[key]
+    }
+
+    /**
+     * Fetches all the keys in the param source
+     * @param source    the map to query for the Keys
+     * @return {@code Set}
+     */
+    Set getKeys(Map source) {
+        if(source == null) {
+            return []
+        }
+
+        return source.keySet()
     }
 
     /**
      * Check if the map contains the key
-     * @param target    the target map to check
+     * @param source    the source map to check
      * @param key       the key to check
      * @return {@code boolean}
      */
-    boolean containsKey(Map target, Object key) {
-        return target.containsKey(key)
+    boolean containsKey(Map source, Object key) {
+        return source.containsKey(key)
     }
 
 }
