@@ -52,7 +52,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'add', name: 'b', value: 4])
+        resultant.contains([operation: OperationType.ADD, name: 'b', value: 4])
     }
 
     def "difference(): should add a `delete` operation, when just one delete is needed"() {
@@ -71,7 +71,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'delete', name: 'b'])
+        resultant.contains([operation: OperationType.DELETE, name: 'b'])
     }
 
     def "difference(): should add an `update` operation, when just one update is needed"() {
@@ -90,7 +90,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'update', name: 'a', value: 4])
+        resultant.contains([operation: OperationType.UPDATE, name: 'a', value: 4])
     }
 
     def "hasDifferentValueAtKey(): should return true when there is a different value. Single index maps."() {
