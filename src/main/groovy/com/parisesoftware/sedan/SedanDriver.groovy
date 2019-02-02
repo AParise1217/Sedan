@@ -19,7 +19,7 @@ class SedanDriver {
                 result.add([operation: OperationType.DELETE, name: key])
             } else {
                 if(hasDifferentValueAtKey(source, target, key)) {
-                    result.add([operation: OperationType.UPDATE, name: key, value: target[key]])
+                    result.add([operation: OperationType.UPDATE, name: key, value: getValueAt(target, key)])
                 } else {
                     // if there is the same value at the key then do nothing
                 }
@@ -28,7 +28,7 @@ class SedanDriver {
 
         getKeys(target).each { key ->
             if(!containsKey(source, key)) {
-                result.add([operation: OperationType.ADD, name: key, value: target[key]])
+                result.add([operation: OperationType.ADD, name: key, value: getValueAt(target, key)])
             } else {
                 // if they both contain the key, then do nothing
             }
