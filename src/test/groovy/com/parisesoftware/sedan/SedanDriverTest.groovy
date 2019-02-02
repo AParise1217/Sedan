@@ -52,7 +52,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'add', name: 'b', value: 4])
+        resultant.contains([operation: OperationType.ADD, name: 'b', value: 4])
     }
 
     def "difference(): should add a `delete` operation, when just one delete is needed"() {
@@ -71,7 +71,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'delete', name: 'b'])
+        resultant.contains([operation: OperationType.DELETE, name: 'b'])
     }
 
     def "difference(): should add an `update` operation, when just one update is needed"() {
@@ -90,7 +90,7 @@ class SedanDriverTest extends Specification {
         !resultant.isEmpty()
 
         then: 'the resultant contains an addition operation'
-        resultant.contains([operation: 'update', name: 'a', value: 4])
+        resultant.contains([operation: OperationType.UPDATE, name: 'a', value: 4])
     }
 
     def "hasDifferentValueAtKey(): should return true when there is a different value. Single index maps."() {
@@ -233,33 +233,6 @@ class SedanDriverTest extends Specification {
 
         then: 'the resultant is false'
         !resultant
-    }
-
-    def "DELETE_OPERATION: should equal `delete`."() {
-
-        when: 'the DELETE_OPERATION value is pulled from the driver'
-        String resultant = SedanDriver.DELETE_OPERATION
-
-        then: 'the resultant is equal to `delete`'
-        resultant == 'delete'
-    }
-
-    def "UPDATE_OPERATION: should equal `update`."() {
-
-        when: 'the UPDATE_OPERATION value is pulled from the driver'
-        String resultant = SedanDriver.UPDATE_OPERATION
-
-        then: 'the resultant is equal to `update`'
-        resultant == 'update'
-    }
-
-    def "ADD_OPERATION: should equal `add`."() {
-
-        when: 'the ADD_OPERATION value is pulled from the driver'
-        String resultant = SedanDriver.ADD_OPERATION
-
-        then: 'the resultant is equal to `add`'
-        resultant == 'add'
     }
 
 }

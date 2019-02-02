@@ -1,20 +1,25 @@
 package com.parisesoftware.sedan
 
+/**
+ * Main Entry-Point point for the Sedan Algorithm
+ */
 class SedanDriver {
 
-    static final String DELETE_OPERATION = 'delete'
-    static final String UPDATE_OPERATION = 'update'
-    static final String ADD_OPERATION = 'add'
-
+    /**
+     * Sedan Difference Algorithm
+     * @param source
+     * @param target
+     * @return
+     */
     List difference(Map source, Map target) {
         List result = []
 
         source.keySet().each { key ->
             if (!containsKey(target, key)) {
-                result.add([operation: DELETE_OPERATION, name: key])
+                result.add([operation: OperationType.DELETE, name: key])
             } else {
                 if(hasDifferentValueAtKey(source, target, key)) {
-                    result.add([operation: UPDATE_OPERATION, name: key, value: target[key]])
+                    result.add([operation: OperationType.UPDATE, name: key, value: target[key]])
                 } else {
                     // if there is the same value at the key then do nothing
                 }
@@ -23,7 +28,7 @@ class SedanDriver {
 
         target.keySet().each { key ->
             if(!containsKey(source, key)) {
-                result.add([operation: ADD_OPERATION, name: key, value: target[key]])
+                result.add([operation: OperationType.ADD, name: key, value: target[key]])
             } else {
                 // if they both contain the key, then do nothing
             }
