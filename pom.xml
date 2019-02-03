@@ -35,6 +35,7 @@
         <junit.version>4.12</junit.version>
         <spockframework.version>1.2-groovy-2.5</spockframework.version>
         <commons-lang3.version>3.8</commons-lang3.version>
+        <cglib.version>3.2.5</cglib.version>
     </properties>
 
     <scm>
@@ -168,6 +169,12 @@
             <artifactId>spock-core</artifactId>
             <version>${spockframework.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib.version}</version>
         </dependency>
 
     </dependencies>

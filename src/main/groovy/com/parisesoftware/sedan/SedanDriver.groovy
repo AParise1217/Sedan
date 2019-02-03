@@ -1,5 +1,8 @@
 package com.parisesoftware.sedan
 
+import com.parisesoftware.sedan.data.ISedanData
+import com.parisesoftware.sedan.data.SedanDataFactory
+
 /**
  * Main Entry-Point point for the Sedan Algorithm
  */
@@ -13,22 +16,24 @@ class SedanDriver {
      */
     List difference(Map source, Map target) {
         List result = []
+        ISedanData sourceData = SedanDataFactory.construct(source)
+        ISedanData targetData = SedanDataFactory.construct(target)
 
-        source.keySet().each { key ->
-            if (!containsKey(target, key)) {
+        sourceData.getKeys().each { key ->
+            if (!targetData.containsKey(key)) {
                 result.add([operation: OperationType.DELETE, name: key])
             } else {
-                if(hasDifferentValueAtKey(source, target, key)) {
-                    result.add([operation: OperationType.UPDATE, name: key, value: target[key]])
+                if(hasDifferentValueAtKey(sourceData, targetData, key)) {
+                    result.add([operation: OperationType.UPDATE, name: key, value: targetData.getValueAt(key)])
                 } else {
                     // if there is the same value at the key then do nothing
                 }
             }
         }
 
-        target.keySet().each { key ->
-            if(!containsKey(source, key)) {
-                result.add([operation: OperationType.ADD, name: key, value: target[key]])
+        targetData.getKeys().each { key ->
+            if(!sourceData.containsKey(key)) {
+                result.add([operation: OperationType.ADD, name: key, value: targetData.getValueAt(key)])
             } else {
                 // if they both contain the key, then do nothing
             }
@@ -43,18 +48,8 @@ class SedanDriver {
      * @param key       the key
      * @return {@code boolean}
      */
-    boolean hasDifferentValueAtKey(Map source, Map target, Object key) {
-        return (source[key] != target[key])
-    }
-
-    /**
-     * Check if the map contains the key
-     * @param target    the target map to check
-     * @param key       the key to check
-     * @return {@code boolean}
-     */
-    boolean containsKey(Map target, Object key) {
-        return target.containsKey(key)
+    boolean hasDifferentValueAtKey(ISedanData source, ISedanData target, Object key) {
+        return (source.getValueAt(key) != target.getValueAt(key))
     }
 
 }
