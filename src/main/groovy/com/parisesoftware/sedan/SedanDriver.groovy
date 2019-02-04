@@ -1,5 +1,12 @@
 package com.parisesoftware.sedan
 
+import com.parisesoftware.sedan.data.ISedanData
+import com.parisesoftware.sedan.data.SedanDataFactory
+import com.parisesoftware.sedan.operation.ISedanOperation
+import com.parisesoftware.sedan.operation.SedanOperationFactory
+import com.parisesoftware.sedan.operation.context.OperationContextAssembler
+import groovy.transform.PackageScope
+
 /**
  * Main Entry-Point point for the Sedan Algorithm
  */
@@ -9,31 +16,65 @@ class SedanDriver {
      * Sedan Difference Algorithm
      * @param source
      * @param target
-     * @return
+     * @return {@code ISedanOperation}
      */
-    List difference(Map source, Map target) {
-        List result = []
+    List<ISedanOperation> difference(Map source, Map target) {
+        List<ISedanOperation> result = []
+        ISedanData sourceData = SedanDataFactory.construct(source)
+        ISedanData targetData = SedanDataFactory.construct(target)
 
-        source.keySet().each { key ->
-            if (!containsKey(target, key)) {
-                result.add([operation: OperationType.DELETE, name: key])
+        sourceData.getKeys().each { key ->
+            if (!targetData.containsKey(key)) {
+                result.add(createDeleteOperation(key))
             } else {
-                if(hasDifferentValueAtKey(source, target, key)) {
-                    result.add([operation: OperationType.UPDATE, name: key, value: target[key]])
+                if(hasDifferentValueAtKey(sourceData, targetData, key)) {
+                    result.add(createUpdateOperation(key, targetData.getValueAt(key)))
                 } else {
                     // if there is the same value at the key then do nothing
                 }
             }
         }
 
-        target.keySet().each { key ->
-            if(!containsKey(source, key)) {
-                result.add([operation: OperationType.ADD, name: key, value: target[key]])
+        targetData.getKeys().each { key ->
+            if(!sourceData.containsKey(key)) {
+                result.add(createAddOperation(key, targetData.getValueAt(key)))
             } else {
                 // if they both contain the key, then do nothing
             }
         }
         return result
+    }
+
+    /**
+     * Simplifies the interaction for creating a new Update Operation
+     * @param name  the name of the Key
+     * @param value the value of the Key
+     * @return {@code ISedanOperation}
+     */
+    @PackageScope
+    static ISedanOperation createUpdateOperation(Object name, Object value) {
+        return SedanOperationFactory.construct(OperationContextAssembler.createUpdateContext(name, value))
+    }
+
+    /**
+     * Simplifies the interaction for creating a new Add Operation
+     * @param name  the name of the Key
+     * @param value the value of the Key
+     * @return {@code ISedanOperation}
+     */
+    @PackageScope
+    static ISedanOperation createAddOperation(Object name, Object value) {
+        return SedanOperationFactory.construct(OperationContextAssembler.createAddContext(name, value))
+    }
+
+    /**
+     * Simplifies the interaction for creating a new Delete Operation
+     * @param name  the name of the Key
+     * @return {@code ISedanOperation}
+     */
+    @PackageScope
+    static ISedanOperation createDeleteOperation(Object name) {
+        return SedanOperationFactory.construct(OperationContextAssembler.createDeleteContext(name))
     }
 
     /**
@@ -43,18 +84,9 @@ class SedanDriver {
      * @param key       the key
      * @return {@code boolean}
      */
-    boolean hasDifferentValueAtKey(Map source, Map target, Object key) {
-        return (source[key] != target[key])
-    }
-
-    /**
-     * Check if the map contains the key
-     * @param target    the target map to check
-     * @param key       the key to check
-     * @return {@code boolean}
-     */
-    boolean containsKey(Map target, Object key) {
-        return target.containsKey(key)
+    @PackageScope
+    boolean hasDifferentValueAtKey(ISedanData source, ISedanData target, Object key) {
+        return (source.getValueAt(key) != target.getValueAt(key))
     }
 
 }

@@ -1,5 +1,6 @@
 package com.parisesoftware.sedan
 
+import com.parisesoftware.sedan.operation.OperationType
 import spock.lang.Specification
 
 class OperationTypeTest extends Specification {
