@@ -1,4 +1,4 @@
-package com.parisesoftware.sedan
+package com.parisesoftware.sedan.operation
 
 /**
  * Types of Operations that Sedan supports

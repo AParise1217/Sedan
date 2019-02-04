@@ -141,5 +141,5 @@ class SedanDataMapAdapterTest extends Specification {
         then: 'the method did not throw a NullPointerException'
         notThrown(NullPointerException)
     }
-    
+
 }
