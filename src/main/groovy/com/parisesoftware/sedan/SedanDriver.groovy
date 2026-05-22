@@ -1,7 +1,7 @@
 package com.parisesoftware.sedan
 
-import com.parisesoftware.sedan.data.ISedanData
 import com.parisesoftware.sedan.data.SedanDataFactory
+import com.parisesoftware.sedan.data.SedanDataSource
 import com.parisesoftware.sedan.operation.ISedanOperation
 import com.parisesoftware.sedan.operation.SedanOperationFactory
 import com.parisesoftware.sedan.operation.context.OperationContextAssembler
@@ -20,24 +20,24 @@ class SedanDriver {
      */
     List<ISedanOperation> difference(Map source, Map target) {
         List<ISedanOperation> result = []
-        ISedanData sourceData = SedanDataFactory.construct(source)
-        ISedanData targetData = SedanDataFactory.construct(target)
+        SedanDataSource sourceData = SedanDataFactory.construct(source)
+        SedanDataSource targetData = SedanDataFactory.construct(target)
 
-        sourceData.getKeys().each { key ->
-            if (!targetData.containsKey(key)) {
+        sourceData.getAllKeys().each { key ->
+            if (!targetData.hasValue(key)) {
                 result.add(createDeleteOperation(key))
             } else {
                 if(hasDifferentValueAtKey(sourceData, targetData, key)) {
-                    result.add(createUpdateOperation(key, targetData.getValueAt(key)))
+                    result.add(createUpdateOperation(key, targetData.getStringValue(key)))
                 } else {
                     // if there is the same value at the key then do nothing
                 }
             }
         }
 
-        targetData.getKeys().each { key ->
-            if(!sourceData.containsKey(key)) {
-                result.add(createAddOperation(key, targetData.getValueAt(key)))
+        targetData.getAllKeys().each { key ->
+            if(!sourceData.hasValue(key)) {
+                result.add(createAddOperation(key, targetData.getStringValue(key)))
             } else {
                 // if they both contain the key, then do nothing
             }
@@ -85,8 +85,8 @@ class SedanDriver {
      * @return {@code boolean}
      */
     @PackageScope
-    boolean hasDifferentValueAtKey(ISedanData source, ISedanData target, Object key) {
-        return (source.getValueAt(key) != target.getValueAt(key))
+    boolean hasDifferentValueAtKey(SedanDataSource source, SedanDataSource target, Object key) {
+        return (source.getStringValue(key) != target.getStringValue(key))
     }
 
 }

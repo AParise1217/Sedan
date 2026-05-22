@@ -1,7 +1,7 @@
 package com.parisesoftware.sedan
 
-import com.parisesoftware.sedan.data.ISedanData
-import com.parisesoftware.sedan.data.impl.SedanDataMapAdapter
+import com.parisesoftware.sedan.data.SedanDataSource
+import com.parisesoftware.sedan.data.impl.MapSedanDataAdapter
 import com.parisesoftware.sedan.operation.IOperationContext
 import com.parisesoftware.sedan.operation.ISedanOperation
 import com.parisesoftware.sedan.operation.OperationType
@@ -12,11 +12,11 @@ import spock.lang.Specification
 class SedanDriverTest extends Specification {
 
     /**
-     * Helper to construct instances of ISedanData
-     * @return {@code ISedanData}
+     * Helper to construct instances of SedanDataSource
+     * @return {@code SedanDataSource}
      */
-    static ISedanData sedanData(Map dataMap) {
-        return new SedanDataMapAdapter(dataMap)
+    static SedanDataSource sedanData(Map dataMap) {
+        return new MapSedanDataAdapter(dataMap)
     }
 
     def "difference(): should return an empty list for two identical, empty maps"() {
@@ -225,8 +225,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return true when there is a different value. Single index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([a: 3])
-        ISedanData testData2 = sedanData([a: 5])
+        SedanDataSource testData1 = sedanData([a: 3])
+        SedanDataSource testData2 = sedanData([a: 5])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -241,8 +241,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return true when there is a different value. Multi-index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([a: 3, b: 52, c: 99])
-        ISedanData testData2 = sedanData([a: 3, b: 52, c: 100])
+        SedanDataSource testData1 = sedanData([a: 3, b: 52, c: 99])
+        SedanDataSource testData2 = sedanData([a: 3, b: 52, c: 100])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -257,8 +257,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return false when there is not different value. Multi-index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([a: 32, b: 52, c: 99])
-        ISedanData testData2 = sedanData([a: 33, b: 52, c: 100])
+        SedanDataSource testData1 = sedanData([a: 32, b: 52, c: 99])
+        SedanDataSource testData2 = sedanData([a: 33, b: 52, c: 100])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -273,8 +273,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return false when there is not different value. Single index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([a: 32])
-        ISedanData testData2 = sedanData([a: 32])
+        SedanDataSource testData1 = sedanData([a: 32])
+        SedanDataSource testData2 = sedanData([a: 32])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -289,8 +289,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return false when the key does not exist in either map. Single index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([a: 32])
-        ISedanData testData2 = sedanData([a: 32])
+        SedanDataSource testData1 = sedanData([a: 32])
+        SedanDataSource testData2 = sedanData([a: 32])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -305,8 +305,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return true when the key does exist in the first map. Single index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([b: 32])
-        ISedanData testData2 = sedanData([a: 32])
+        SedanDataSource testData1 = sedanData([b: 32])
+        SedanDataSource testData2 = sedanData([a: 32])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
@@ -321,8 +321,8 @@ class SedanDriverTest extends Specification {
     def "hasDifferentValueAtKey(): should return true when the key does exist in the second map. Single index maps."() {
 
         given: 'two test Sedan Data sets'
-        ISedanData testData1 = sedanData([b: 32])
-        ISedanData testData2 = sedanData([a: 32])
+        SedanDataSource testData1 = sedanData([b: 32])
+        SedanDataSource testData2 = sedanData([a: 32])
 
         and: 'a Sedan Driver'
         SedanDriver testSedanDriver = new SedanDriver()
