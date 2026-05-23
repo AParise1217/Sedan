@@ -4,7 +4,7 @@ import com.parisesoftware.sedan.data.SedanDataFactory
 import com.parisesoftware.sedan.data.SedanDataSource
 import com.parisesoftware.sedan.operation.ISedanOperation
 import com.parisesoftware.sedan.operation.SedanOperationFactory
-import com.parisesoftware.sedan.operation.context.OperationContextAssembler
+import com.parisesoftware.sedan.operation.context.OperationContextFactory
 import groovy.transform.PackageScope
 
 /**
@@ -53,7 +53,7 @@ class SedanDriver {
      */
     @PackageScope
     static ISedanOperation createUpdateOperation(Object name, Object value) {
-        return SedanOperationFactory.construct(OperationContextAssembler.createUpdateContext(name, value))
+        return SedanOperationFactory.construct(OperationContextFactory.createUpdateContext(name, value))
     }
 
     /**
@@ -64,7 +64,7 @@ class SedanDriver {
      */
     @PackageScope
     static ISedanOperation createAddOperation(Object name, Object value) {
-        return SedanOperationFactory.construct(OperationContextAssembler.createAddContext(name, value))
+        return SedanOperationFactory.construct(OperationContextFactory.createAddContext(name, value))
     }
 
     /**
@@ -74,7 +74,7 @@ class SedanDriver {
      */
     @PackageScope
     static ISedanOperation createDeleteOperation(Object name) {
-        return SedanOperationFactory.construct(OperationContextAssembler.createDeleteContext(name))
+        return SedanOperationFactory.construct(OperationContextFactory.createDeleteContext(name))
     }
 
     /**

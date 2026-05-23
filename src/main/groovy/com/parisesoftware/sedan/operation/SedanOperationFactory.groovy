@@ -1,5 +1,6 @@
 package com.parisesoftware.sedan.operation
 
+import com.parisesoftware.sedan.operation.context.OperationContext
 import com.parisesoftware.sedan.operation.impl.AdditionSedanOperation
 import com.parisesoftware.sedan.operation.impl.DeletionSedanOperation
 import com.parisesoftware.sedan.operation.impl.UpdateSedanOperation
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.NotImplementedException
  */
 class SedanOperationFactory {
 
-    static ISedanOperation construct(IOperationContext context) {
+    static ISedanOperation construct(OperationContext context) {
 
         switch(context.type) {
             case OperationType.ADD:

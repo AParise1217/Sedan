@@ -12,8 +12,7 @@ class SedanOperationFactoryTest extends Specification {
     def "SedanOperationFactory.construct(): should invoke the AdditionSedanOperation constructor when there is an ADD type"() {
 
         given: 'some sample data'
-        OperationContext testContext =
-                new OperationContext(name: 'Black Panther', type: OperationType.ADD, value: 'T\'Challa')
+        OperationContext testContext = new OperationContext(OperationType.ADD, 'Black Panther', 'T\'Challa')
 
         and: 'a global AdditionSedanOperation mock'
         GroovyMock(AdditionSedanOperation, global: true)
@@ -28,7 +27,7 @@ class SedanOperationFactoryTest extends Specification {
     def "SedanOperationFactory.construct(): should invoke the DeletionSedanOperation constructor when there is a DELETE type"() {
 
         given: 'some sample data'
-        OperationContext testContext = new OperationContext(name: 'Thor', type: OperationType.DELETE)
+        OperationContext testContext = new OperationContext(OperationType.DELETE, 'Thor', null)
 
         and: 'a global DeletionSedanOperation mock'
         GroovyMock(DeletionSedanOperation, global: true)
@@ -43,7 +42,7 @@ class SedanOperationFactoryTest extends Specification {
     def "SedanOperationFactory.construct(): should invoke the UpdateSedanOperation constructor when there is an UPDATE type"() {
 
         given: 'some sample data'
-        OperationContext testContext = new OperationContext(name: 'Black Widow', type: OperationType.UPDATE, value: 'Natasha')
+        OperationContext testContext = new OperationContext(OperationType.UPDATE, 'Black Widow', 'Natasha')
 
         and: 'a global UpdateSedanOperation mock'
         GroovyMock(UpdateSedanOperation, global: true)
@@ -58,7 +57,7 @@ class SedanOperationFactoryTest extends Specification {
     def "SedanOperationFactory.construct(): should throw NotImplementedException when there is an unknown type passed in"() {
 
         given: 'some sample data'
-        OperationContext testContext = new OperationContext(name: 'Black Widow', type: GroovyMock(OperationType), value: 'Natasha')
+        OperationContext testContext = new OperationContext(null, 'Black Widow', 'Natasha')
 
         when: 'the SedanOperationFactory.construct() method is invoked with our sample data'
         SedanOperationFactory.construct(testContext)

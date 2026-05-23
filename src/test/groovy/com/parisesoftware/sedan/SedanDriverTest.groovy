@@ -2,11 +2,11 @@ package com.parisesoftware.sedan
 
 import com.parisesoftware.sedan.data.SedanDataSource
 import com.parisesoftware.sedan.data.impl.MapSedanDataAdapter
-import com.parisesoftware.sedan.operation.IOperationContext
 import com.parisesoftware.sedan.operation.ISedanOperation
 import com.parisesoftware.sedan.operation.OperationType
 import com.parisesoftware.sedan.operation.SedanOperationFactory
-import com.parisesoftware.sedan.operation.context.OperationContextAssembler
+import com.parisesoftware.sedan.operation.context.OperationContext
+import com.parisesoftware.sedan.operation.context.OperationContextFactory
 import spock.lang.Specification
 
 class SedanDriverTest extends Specification {
@@ -334,14 +334,14 @@ class SedanDriverTest extends Specification {
         resultant
     }
 
-    def "createUpdateOperation(): should delegate to OperationContextAssembler for OperationContext instance."() {
+    def "createUpdateOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
 
         given: 'some test data'
         Object testName = 'Sports'
         Object testValue = 'Football'
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -352,20 +352,20 @@ class SedanDriverTest extends Specification {
         when: 'the createUpdateOperation() method is invoked '
         testSedanDriver.createUpdateOperation(testName, testValue)
 
-        then: 'the OperationContextAssembler was invoked with the proper params'
-        1 * OperationContextAssembler.createUpdateContext(testName, testValue)
+        then: 'the OperationContextFactory was invoked with the proper params'
+        1 * OperationContextFactory.createUpdateContext(testName, testValue)
     }
 
-    def "createUpdateOperation(): should invoke the SedanOperationFactory with the Context from OperationContextAssembler."() {
+    def "createUpdateOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
 
-        given: 'a mocked IOperationContext'
-        IOperationContext mockContext = Mock(IOperationContext)
+        given: 'a mocked OperationContext'
+        OperationContext mockContext = Mock(OperationContext)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextAssembler.createUpdateContext(_, _) >> mockContext
+        OperationContextFactory.createUpdateContext(_, _) >> mockContext
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -385,11 +385,11 @@ class SedanDriverTest extends Specification {
         given: 'a mocked ISedanOperation'
         ISedanOperation mockOperation = Mock(ISedanOperation)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextAssembler.createUpdateContext(_, _) >> Mock(IOperationContext)
+        OperationContextFactory.createUpdateContext(_, _) >> Mock(OperationContext)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -407,14 +407,14 @@ class SedanDriverTest extends Specification {
         resultant == mockOperation
     }
 
-    def "createAddOperation(): should delegate to OperationContextAssembler for OperationContext instance."() {
+    def "createAddOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
 
         given: 'some test data'
         Object testName = 'Sports'
         Object testValue = 'Football'
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -425,20 +425,20 @@ class SedanDriverTest extends Specification {
         when: 'the createAddOperation() method is invoked '
         testSedanDriver.createAddOperation(testName, testValue)
 
-        then: 'the OperationContextAssembler was invoked with the proper params'
-        1 * OperationContextAssembler.createAddContext(testName, testValue)
+        then: 'the OperationContextFactory was invoked with the proper params'
+        1 * OperationContextFactory.createAddContext(testName, testValue)
     }
 
-    def "createAddOperation(): should invoke the SedanOperationFactory with the Context from OperationContextAssembler."() {
+    def "createAddOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
 
-        given: 'a mocked IOperationContext'
-        IOperationContext mockContext = Mock(IOperationContext)
+        given: 'a mocked OperationContext'
+        OperationContext mockContext = Mock(OperationContext)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextAssembler.createAddContext(_, _) >> mockContext
+        OperationContextFactory.createAddContext(_, _) >> mockContext
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -458,11 +458,11 @@ class SedanDriverTest extends Specification {
         given: 'a mocked ISedanOperation'
         ISedanOperation mockOperation = Mock(ISedanOperation)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextAssembler.createAddContext(_, _) >> Mock(IOperationContext)
+        OperationContextFactory.createAddContext(_, _) >> Mock(OperationContext)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -480,13 +480,13 @@ class SedanDriverTest extends Specification {
         resultant == mockOperation
     }
 
-    def "createDeleteOperation(): should delegate to OperationContextAssembler for OperationContext instance."() {
+    def "createDeleteOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
 
         given: 'some test data'
         Object testName = 'Sports'
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -497,20 +497,20 @@ class SedanDriverTest extends Specification {
         when: 'the createDeleteOperation() method is invoked '
         testSedanDriver.createDeleteOperation(testName)
 
-        then: 'the OperationContextAssembler was invoked with the proper params'
-        1 * OperationContextAssembler.createDeleteContext(testName)
+        then: 'the OperationContextFactory was invoked with the proper params'
+        1 * OperationContextFactory.createDeleteContext(testName)
     }
 
-    def "createDeleteOperation(): should invoke the SedanOperationFactory with the Context from OperationContextAssembler."() {
+    def "createDeleteOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
 
-        given: 'a mocked IOperationContext'
-        IOperationContext mockContext = Mock(IOperationContext)
+        given: 'a mocked OperationContext'
+        OperationContext mockContext = Mock(OperationContext)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextAssembler.createDeleteContext(_) >> mockContext
+        OperationContextFactory.createDeleteContext(_) >> mockContext
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
@@ -530,11 +530,11 @@ class SedanDriverTest extends Specification {
         given: 'a mocked ISedanOperation'
         ISedanOperation mockOperation = Mock(ISedanOperation)
 
-        and: 'a globally mocked OperationContextAssembler'
-        GroovyMock(OperationContextAssembler, global: true)
+        and: 'a globally mocked OperationContextFactory'
+        GroovyMock(OperationContextFactory, global: true)
 
         and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextAssembler.createDeleteContext(_) >> Mock(IOperationContext)
+        OperationContextFactory.createDeleteContext(_) >> Mock(OperationContext)
 
         and: 'a globally mocked SedanOperationFactory'
         GroovyMock(SedanOperationFactory, global: true)
