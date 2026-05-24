@@ -2,554 +2,204 @@ package com.parisesoftware.sedan
 
 import com.parisesoftware.sedan.data.SedanDataSource
 import com.parisesoftware.sedan.data.impl.MapSedanDataAdapter
-import com.parisesoftware.sedan.operation.ISedanOperation
 import com.parisesoftware.sedan.operation.OperationType
-import com.parisesoftware.sedan.operation.SedanOperationFactory
-import com.parisesoftware.sedan.operation.context.OperationContext
-import com.parisesoftware.sedan.operation.context.OperationContextFactory
+import com.parisesoftware.sedan.operation.SedanOperation
 import spock.lang.Specification
 
 class SedanDriverTest extends Specification {
 
-    /**
-     * Helper to construct instances of SedanDataSource
-     * @return {@code SedanDataSource}
-     */
     static SedanDataSource sedanData(Map dataMap) {
         return new MapSedanDataAdapter(dataMap)
     }
 
+    // ── difference() ─────────────────────────────────────────────────────────
+
     def "difference(): should return an empty list for two identical, empty maps"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two identical, empty maps'
-        Map testMap1 = [:]
-        Map testMap2 = [:]
+        when:
+        List result = driver.difference([:], [:])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is an empty list'
-        resultant.isEmpty()
+        then:
+        result.isEmpty()
     }
 
     def "difference(): should return an empty list for two identical, populated maps of a single key"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two identical maps with a single key'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 3]
+        when:
+        List result = driver.difference([a: 3], [a: 3])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is an empty list'
-        resultant.isEmpty()
+        then:
+        result.isEmpty()
     }
 
-    def "difference(): should add an `add` operation, when just one add is needed"() {
+    def "difference(): should add an ADD operation when a key is only in the target"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 3, b: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 3, b: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant contains an addition operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.ADD } != null
+        then:
+        !result.isEmpty()
+        result.find { it.type() == OperationType.ADD } != null
     }
 
-    def "difference(): should not add a `delete` operation, when just one add is needed"() {
+    def "difference(): should not add a DELETE operation when just one add is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 3, b: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 3, b: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain a delete operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.DELETE } == null
+        then:
+        result.find { it.type() == OperationType.DELETE } == null
     }
 
-    def "difference(): should not add an `update` operation, when just one add is needed"() {
+    def "difference(): should not add an UPDATE operation when just one add is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 3, b: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 3, b: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain an update operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.UPDATE } == null
+        then:
+        result.find { it.type() == OperationType.UPDATE } == null
     }
 
-    def "difference(): should add a `delete` operation, when just one delete is needed"() {
+    def "difference(): should add a DELETE operation when a key is only in the source"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3, b: 4]
-        Map testMap2 = [a: 3]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3, b: 4], [a: 3])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List<ISedanOperation> resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant contains a delete operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.DELETE }
+        then:
+        !result.isEmpty()
+        result.find { it.type() == OperationType.DELETE } != null
     }
 
-    def "difference(): should not add an `update` operation, when just one delete is needed"() {
+    def "difference(): should not add an UPDATE operation when just one delete is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3, b: 4]
-        Map testMap2 = [a: 3]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3, b: 4], [a: 3])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List<ISedanOperation> resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain an update operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.UPDATE } == null
+        then:
+        result.find { it.type() == OperationType.UPDATE } == null
     }
 
-    def "difference(): should not add an `add` operation, when just one delete is needed"() {
+    def "difference(): should not add an ADD operation when just one delete is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3, b: 4]
-        Map testMap2 = [a: 3]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3, b: 4], [a: 3])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List<ISedanOperation> resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain an add operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.ADD } == null
+        then:
+        result.find { it.type() == OperationType.ADD } == null
     }
 
-    def "difference(): should add an `update` operation, when just one update is needed"() {
+    def "difference(): should add an UPDATE operation when a shared key has a different value"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant contains an update operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.UPDATE } != null
+        then:
+        !result.isEmpty()
+        result.find { it.type() == OperationType.UPDATE } != null
     }
 
-    def "difference(): should not add an `add` operation, when just one update is needed"() {
+    def "difference(): should not add an ADD operation when just one update is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain an addition operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.ADD } == null
+        then:
+        result.find { it.type() == OperationType.ADD } == null
     }
 
-    def "difference(): should not add a `delete` operation, when just one update is needed"() {
+    def "difference(): should not add a DELETE operation when just one update is needed"() {
+        given:
+        SedanDriver driver = new SedanDriver()
 
-        given: 'two test maps'
-        Map testMap1 = [a: 3]
-        Map testMap2 = [a: 4]
+        when:
+        List<SedanOperation> result = driver.difference([a: 3], [a: 4])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the difference is calculated between the maps'
-        List resultant = testSedanDriver.difference(testMap1, testMap2)
-
-        then: 'the resultant is a non-empty list'
-        !resultant.isEmpty()
-
-        then: 'the resultant does not contain a delete operation'
-        resultant.find { ((ISedanOperation) it).type == OperationType.DELETE } == null
+        then:
+        result.find { it.type() == OperationType.DELETE } == null
     }
 
-    def "hasDifferentValueAtKey(): should return true when there is a different value. Single index maps."() {
+    // ── hasDifferentValueAtKey() ──────────────────────────────────────────────
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([a: 3])
-        SedanDataSource testData2 = sedanData([a: 5])
+    def "hasDifferentValueAtKey(): should return true when values differ — single key"() {
+        given:
+        SedanDataSource data1 = sedanData([a: 3])
+        SedanDataSource data2 = sedanData([a: 5])
 
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'a')
-
-        then: 'the resultant is true'
-        resultant
+        expect:
+        new SedanDriver().hasDifferentValueAtKey(data1, data2, 'a')
     }
 
-    def "hasDifferentValueAtKey(): should return true when there is a different value. Multi-index maps."() {
+    def "hasDifferentValueAtKey(): should return true when values differ — multi key"() {
+        given:
+        SedanDataSource data1 = sedanData([a: 3, b: 52, c: 99])
+        SedanDataSource data2 = sedanData([a: 3, b: 52, c: 100])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([a: 3, b: 52, c: 99])
-        SedanDataSource testData2 = sedanData([a: 3, b: 52, c: 100])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'c')
-
-        then: 'the resultant is true'
-        resultant
+        expect:
+        new SedanDriver().hasDifferentValueAtKey(data1, data2, 'c')
     }
 
-    def "hasDifferentValueAtKey(): should return false when there is not different value. Multi-index maps."() {
+    def "hasDifferentValueAtKey(): should return false when values are equal — multi key"() {
+        given:
+        SedanDataSource data1 = sedanData([a: 32, b: 52, c: 99])
+        SedanDataSource data2 = sedanData([a: 33, b: 52, c: 100])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([a: 32, b: 52, c: 99])
-        SedanDataSource testData2 = sedanData([a: 33, b: 52, c: 100])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'b')
-
-        then: 'the resultant is false'
-        !resultant
+        expect:
+        !new SedanDriver().hasDifferentValueAtKey(data1, data2, 'b')
     }
 
-    def "hasDifferentValueAtKey(): should return false when there is not different value. Single index maps."() {
+    def "hasDifferentValueAtKey(): should return false when values are equal — single key"() {
+        given:
+        SedanDataSource data1 = sedanData([a: 32])
+        SedanDataSource data2 = sedanData([a: 32])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([a: 32])
-        SedanDataSource testData2 = sedanData([a: 32])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'a')
-
-        then: 'the resultant is false'
-        !resultant
+        expect:
+        !new SedanDriver().hasDifferentValueAtKey(data1, data2, 'a')
     }
 
-    def "hasDifferentValueAtKey(): should return false when the key does not exist in either map. Single index maps."() {
+    def "hasDifferentValueAtKey(): should return false when key is absent from both maps"() {
+        given:
+        SedanDataSource data1 = sedanData([a: 32])
+        SedanDataSource data2 = sedanData([a: 32])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([a: 32])
-        SedanDataSource testData2 = sedanData([a: 32])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'b')
-
-        then: 'the resultant is false'
-        !resultant
+        expect:
+        !new SedanDriver().hasDifferentValueAtKey(data1, data2, 'b')
     }
 
-    def "hasDifferentValueAtKey(): should return true when the key does exist in the first map. Single index maps."() {
+    def "hasDifferentValueAtKey(): should return true when key is only in the first map"() {
+        given:
+        SedanDataSource data1 = sedanData([b: 32])
+        SedanDataSource data2 = sedanData([a: 32])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([b: 32])
-        SedanDataSource testData2 = sedanData([a: 32])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists in the second map'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'a')
-
-        then: 'the resultant is true'
-        resultant
+        expect:
+        new SedanDriver().hasDifferentValueAtKey(data1, data2, 'a')
     }
 
-    def "hasDifferentValueAtKey(): should return true when the key does exist in the second map. Single index maps."() {
+    def "hasDifferentValueAtKey(): should return true when key is only in the second map"() {
+        given:
+        SedanDataSource data1 = sedanData([b: 32])
+        SedanDataSource data2 = sedanData([a: 32])
 
-        given: 'two test Sedan Data sets'
-        SedanDataSource testData1 = sedanData([b: 32])
-        SedanDataSource testData2 = sedanData([a: 32])
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the hasDifferentValueAtKey method is invoked between the maps, with a key that exists in the first map'
-        boolean resultant = testSedanDriver.hasDifferentValueAtKey(testData1, testData2, 'b')
-
-        then: 'the resultant is true'
-        resultant
+        expect:
+        new SedanDriver().hasDifferentValueAtKey(data1, data2, 'b')
     }
-
-    def "createUpdateOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
-
-        given: 'some test data'
-        Object testName = 'Sports'
-        Object testValue = 'Football'
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createUpdateOperation() method is invoked '
-        testSedanDriver.createUpdateOperation(testName, testValue)
-
-        then: 'the OperationContextFactory was invoked with the proper params'
-        1 * OperationContextFactory.createUpdateContext(testName, testValue)
-    }
-
-    def "createUpdateOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
-
-        given: 'a mocked OperationContext'
-        OperationContext mockContext = Mock(OperationContext)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextFactory.createUpdateContext(_, _) >> mockContext
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createUpdateOperation() method is invoked '
-        testSedanDriver.createUpdateOperation('these values', 'dont matter')
-
-        then: 'the SedanOperationFactory was invoked with the proper params'
-        1 * SedanOperationFactory.construct(mockContext)
-    }
-
-    def "createUpdateOperation(): should return the value returned by the SedanOperationFactory."() {
-
-        given: 'a mocked ISedanOperation'
-        ISedanOperation mockOperation = Mock(ISedanOperation)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextFactory.createUpdateContext(_, _) >> Mock(OperationContext)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'the factory is stubbed to always return our mocked Operation'
-        SedanOperationFactory.construct(_) >> mockOperation
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createUpdateOperation() method is invoked'
-        ISedanOperation resultant = testSedanDriver.createUpdateOperation('these values', 'dont matter')
-
-        then: 'the resultant SedanOperation is equal to the value stubbed to return from the factory'
-        resultant == mockOperation
-    }
-
-    def "createAddOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
-
-        given: 'some test data'
-        Object testName = 'Sports'
-        Object testValue = 'Football'
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createAddOperation() method is invoked '
-        testSedanDriver.createAddOperation(testName, testValue)
-
-        then: 'the OperationContextFactory was invoked with the proper params'
-        1 * OperationContextFactory.createAddContext(testName, testValue)
-    }
-
-    def "createAddOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
-
-        given: 'a mocked OperationContext'
-        OperationContext mockContext = Mock(OperationContext)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextFactory.createAddContext(_, _) >> mockContext
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createUpdateOperation() method is invoked '
-        testSedanDriver.createAddOperation('these values', 'dont matter')
-
-        then: 'the SedanOperationFactory was invoked with the proper params'
-        1 * SedanOperationFactory.construct(mockContext)
-    }
-
-    def "createAddOperation(): should return the value returned by the SedanOperationFactory."() {
-
-        given: 'a mocked ISedanOperation'
-        ISedanOperation mockOperation = Mock(ISedanOperation)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextFactory.createAddContext(_, _) >> Mock(OperationContext)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'the factory is stubbed to always return our mocked Operation'
-        SedanOperationFactory.construct(_) >> mockOperation
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createUpdateOperation() method is invoked'
-        ISedanOperation resultant = testSedanDriver.createAddOperation('these values', 'dont matter')
-
-        then: 'the resultant SedanOperation is equal to the value stubbed to return from the factory'
-        resultant == mockOperation
-    }
-
-    def "createDeleteOperation(): should delegate to OperationContextFactory for OperationContext instance."() {
-
-        given: 'some test data'
-        Object testName = 'Sports'
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createDeleteOperation() method is invoked '
-        testSedanDriver.createDeleteOperation(testName)
-
-        then: 'the OperationContextFactory was invoked with the proper params'
-        1 * OperationContextFactory.createDeleteContext(testName)
-    }
-
-    def "createDeleteOperation(): should invoke the SedanOperationFactory with the Context from OperationContextFactory."() {
-
-        given: 'a mocked OperationContext'
-        OperationContext mockContext = Mock(OperationContext)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return our mocked Context'
-        OperationContextFactory.createDeleteContext(_) >> mockContext
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createDeleteOperation() method is invoked '
-        testSedanDriver.createDeleteOperation('these values')
-
-        then: 'the SedanOperationFactory was invoked with the proper params'
-        1 * SedanOperationFactory.construct(mockContext)
-    }
-
-    def "createDeleteOperation(): should return the value returned by the SedanOperationFactory."() {
-
-        given: 'a mocked ISedanOperation'
-        ISedanOperation mockOperation = Mock(ISedanOperation)
-
-        and: 'a globally mocked OperationContextFactory'
-        GroovyMock(OperationContextFactory, global: true)
-
-        and: 'the assembler is stubbed to always return a mocked Context'
-        OperationContextFactory.createDeleteContext(_) >> Mock(OperationContext)
-
-        and: 'a globally mocked SedanOperationFactory'
-        GroovyMock(SedanOperationFactory, global: true)
-
-        and: 'the factory is stubbed to always return our mocked Operation'
-        SedanOperationFactory.construct(_) >> mockOperation
-
-        and: 'a Sedan Driver'
-        SedanDriver testSedanDriver = new SedanDriver()
-
-        when: 'the createDeleteOperation() method is invoked'
-        ISedanOperation resultant = testSedanDriver.createDeleteOperation('these values')
-
-        then: 'the resultant SedanOperation is equal to the value stubbed to return from the factory'
-        resultant == mockOperation
-    }
-
 }

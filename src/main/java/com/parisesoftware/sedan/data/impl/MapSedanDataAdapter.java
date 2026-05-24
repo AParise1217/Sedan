@@ -2,8 +2,6 @@ package com.parisesoftware.sedan.data.impl;
 
 import com.parisesoftware.sedan.data.SedanDataAdapter;
 import com.parisesoftware.sedan.data.SedanDataSource;
-import org.apache.commons.collections4.MapUtils;
-
 import java.util.*;
 
 /**
@@ -89,6 +87,6 @@ public class MapSedanDataAdapter implements SedanDataAdapter<Map>, SedanDataSour
 
     @Override
     public boolean isEmpty() {
-        return MapUtils.isEmpty(source);
+        return source == null || source.isEmpty();
     }
 }
