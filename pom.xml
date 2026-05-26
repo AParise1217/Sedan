@@ -4,12 +4,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.parisesoftware.sedan</groupId>
-    <artifactId>sedan-core</artifactId>
+    <artifactId>sedan-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <name>Sedan :: Core</name>
-    <description>Sequential Edit DistANce Core Module</description>
+    <name>Sedan :: Parent</name>
+    <description>Sequential Edit DistANce — parent aggregator POM</description>
+
+    <modules>
+        <module>sedan-core</module>
+        <module>sedan-jackson</module>
+        <module>sedan-spring-boot-autoconfigure</module>
+        <module>sedan-spring-boot-starter</module>
+    </modules>
 
     <properties>
         <!-- Maven Build Properties -->
@@ -37,6 +44,10 @@
         <bytebuddy.version>1.17.8</bytebuddy.version>
         <mockito.version>5.11.0</mockito.version>
         <objenesis.version>3.3</objenesis.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <jackson.version>2.18.3</jackson.version>
+        <spring-boot.version>3.4.5</spring-boot.version>
     </properties>
 
     <scm>
@@ -103,12 +114,48 @@
                         <groovy.grape.enable>false</groovy.grape.enable>
                     </systemPropertyVariables>
                     <argLine>
+                        @{argLine}
                         --add-opens=java.base/java.lang=ALL-UNNAMED
                         --add-opens=java.base/java.util=ALL-UNNAMED
                         --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
                         --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
                     </argLine>
                 </configuration>
+            </plugin>
+
+            <!-- JaCoCo code coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Javadoc generation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <release>26</release>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Git commit ID plugin -->
